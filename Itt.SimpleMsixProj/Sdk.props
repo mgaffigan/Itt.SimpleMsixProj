@@ -1,5 +1,5 @@
 <Project>
-  <Import Project="Sdk.props" Sdk="Microsoft.Build.NoTargets/3.7.0" />
+  <Import Project="Sdk.props" Sdk="Microsoft.Build.NoTargets" Version="3.7.0" />
   <PropertyGroup>
     <TargetExt>.msix</TargetExt>
     <TimestampServerUrl Condition="'$(TimestampServerUrl)' == ''">http://sha256timestamp.ws.symantec.com/sha256/timestamp</TimestampServerUrl>
