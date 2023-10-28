@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Title>ITT Simple MSIX Project SDK</Title>
+    <Description>Provides targets for a project which generates an msix using makeappx and dotnet publish</Description>
+    <PackageTags>MSBuild;MSBuildSdk;appx;msix</PackageTags>
+    <PackageType>MSBuildSdk</PackageType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="Sdk.props" Pack="true" PackagePath="Sdk\" />
+    <None Include="Sdk.targets" Pack="true" PackagePath="Sdk\" />
+  </ItemGroup>
+</Project>

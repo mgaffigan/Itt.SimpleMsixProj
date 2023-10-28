@@ -1,0 +1,86 @@
+<Project>
+  <Target Name="ItpHarvest_ValidateProperties">
+    <PropertyGroup>
+      <ItpHarvestDir>$(IntermediateOutputPath)ItpHarvest\</ItpHarvestDir>
+      <AbsHarvestDir>$(MSBuildThisFileDirectory)$(IntermediateOutputPath)ItpHarvest\</AbsHarvestDir>
+      <DotnetTool Condition="'$(DotnetTool)' == ''">C:\Program Files\dotnet\dotnet.exe</DotnetTool>
+      <PublishCommand Condition="'$(PublishCommand)' == ''">"$(DotnetTool)" publish $(PublishCommandOptions) -r $(RuntimeIdentifier) -c $(Configuration)</PublishCommand>
+      
+      <!-- WindowsSdkDir, WindowsSdkVersion, and WindowsSdkVerBinPath are set by developer command prompt -->
+      <!-- Default them for other circumstances -->
+      <WindowsSdkDir Condition="'$(WindowsSdkDir)' == ''">$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@InstallationFolder)</WindowsSdkDir>
+      <WindowsSdkVersion Condition="'$(WindowsSdkVersion)' == ''">$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows\v10.0@ProductVersion).0</WindowsSdkVersion>
+      <WindowsSdkVerBinPath Condition="'$(WindowsSdkVerBinPath)' == ''">$(WindowsSdkDir)bin\$(WindowsSdkVersion)\</WindowsSdkVerBinPath>
+      
+      <MakePriTool Condition="'$(MakePriTool)' == ''">$(WindowsSdkVerBinPath)x64\makepri.exe</MakePriTool>
+      <MakeAppxTool Condition="'$(MakeAppxTool)' == ''">$(WindowsSdkVerBinPath)x64\makeappx.exe</MakeAppxTool>
+      <SigntoolTool Condition="'$(SigntoolTool)' == ''">$(WindowsSdkVerBinPath)x64\signtool.exe</SigntoolTool>
+    </PropertyGroup>
+    
+    <Error Text="Cannot execute with empty ItpHarvestDir" Condition="'$(ItpHarvestDir)' == ''" />
+    <Error Text="Cannot locate makeappx at '$(MakeAppxTool)'" Condition="!Exists('$(MakeAppxTool)')" />
+    
+    <ItemGroup>
+      <_HarvestFilesShouldNotExist Include="$(AbsHarvestDir)**\*" />
+    </ItemGroup>
+    <Error Text="Files exist in harvest directory.  Run clean first" Condition="'@(_HarvestFilesShouldNotExist)' != ''" />
+  </Target>
+  
+  <Target Name="ItpHarvest_Assets">
+    <Copy SourceFiles="@(OtherAsset)" DestinationFolder="$(AbsHarvestDir)%(RelativeDir)%(RecursiveDir)" SkipUnchangedFiles="True">
+      <Output TaskParameter="DestinationFiles" ItemName="FileWrites" />
+    </Copy>
+    <PropertyGroup>
+      <PriConfig>$(AbsHarvestDir)priconfig.xml</PriConfig>
+    </PropertyGroup>
+    <Exec Command="&quot;$(MakePriTool)&quot; createconfig /cf &quot;$(PriConfig)&quot; /dq en-US" />
+    <ItemGroup>
+      <FileWrites Include="$(PriConfig)" />
+      <FileWrites Include="$(AbsHarvestDir)resources.pri" />
+    </ItemGroup>
+    <Exec Command="&quot;$(MakePriTool)&quot; new /pr &quot;$(AbsHarvestDir)\&quot; /cf &quot;$(PriConfig)&quot; /o /of &quot;$(AbsHarvestDir)resources.pri&quot;" />
+  </Target>
+  
+  <Target Name="ItpHarvest_Restore">
+    <!-- <Exec Command="&quot;$(DotnetTool)&quot; restore -r $(RuntimeIdentifier) ../Itp.AmazonConnect.DesktopClient.sln" /> -->
+  </Target>
+  
+  <!-- Run per %(PublishProject) to ensure FileWrites gets updated even if one fails -->
+  <Target Name="ItpHarvest_Publish" Inputs="%(PublishProject.Identity)" Outputs="%(Identity)_notexists">
+    <!-- PublishProject comes in nullable PackagePath -->
+    <Exec Command="$(PublishCommand) %(PublishProject.PublishOptions) -o &quot;$([MSBuild]::EnsureTrailingSlash('$(AbsHarvestDir)%(PublishProject.PackagePath)'))\&quot; &quot;$(MSBuildThisFileDirectory)%(PublishProject.Identity)&quot;" />
+    <ItemGroup>
+      <FileWrites Include="$(MSBuildThisFileDirectory)$(ItpHarvestDir)**\*" />
+    </ItemGroup>
+    <!-- Since we're including from the harvest dir multiple times, remove dups -->
+    <RemoveDuplicates Inputs="@(FileWrites)" />
+  </Target>
+  
+  <Target Name="ItpPackage_MakeAppx">
+    <Exec Command="&quot;$(MakeAppxTool)&quot; pack /d &quot;$(AbsHarvestDir)\&quot; /p &quot;$(TargetPath)&quot; /o" />
+    <ItemGroup>
+      <FileWrites Include="$(TargetPath)" />
+    </ItemGroup>
+  </Target>
+  
+  <Target Name="ItpPackage_Sign" Condition="'$(Configuration)' != 'Release'">
+    <PropertyGroup>
+      <SigntoolCertOptions Condition="'$(SigntoolCertOptions)' == '' and '$(SigntoolPfx)' != ''">/f &quot;$(SigntoolPfx)&quot; /p &quot;$(SigntoolPassword)&quot;</SigntoolCertOptions>
+    </PropertyGroup>
+    <Warning Text="No SigntoolPfx property was specified.  Msix will not be signed" Condition="'$(SigntoolCertOptions)' == ''" />
+    <Exec Command="&quot;$(SigntoolTool)&quot; sign /a /v /fd SHA256 /tr $(TimestampServerUrl) /td SHA256 $(SigntoolCertOptions) &quot;$(TargetPath)&quot;"
+          Condition="'$(SigntoolCertOptions)' != ''"/>
+  </Target>
+  
+  <PropertyGroup>
+    <ItpHarvestTargets>
+      ItpHarvest_ValidateProperties;
+      ItpHarvest_Assets;
+      ItpHarvest_Restore;
+      ItpHarvest_Publish;
+      ItpPackage_MakeAppx;
+      ItpPackage_Sign;
+    </ItpHarvestTargets>
+  </PropertyGroup>
+  <Target Name="ItpHarvest" DependsOnTargets="$(ItpHarvestTargets)" AfterTargets="CoreCompile" />
+</Project>

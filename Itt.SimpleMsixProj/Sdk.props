@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetExt>.msix</TargetExt>
+    <TimestampServerUrl Condition="'$(TimestampServerUrl)' == ''">http://sha256timestamp.ws.symantec.com/sha256/timestamp</TimestampServerUrl>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x86</RuntimeIdentifier>
+    <PublishCommandOptions Condition="'$(PublishCommandOptions)' == ''">--self-contained false</PublishCommandOptions>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvailableItemName Include="OtherAsset" />
+  </ItemGroup>
+  <ItemGroup>
+    <OtherAsset Include="AppxManifest.xml" />
+    <OtherAsset Include="Assets\**\*" />
+  </ItemGroup>
+</Project>
