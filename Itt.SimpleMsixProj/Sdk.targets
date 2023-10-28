@@ -2,7 +2,7 @@
   <Target Name="ItpHarvest_ValidateProperties">
     <PropertyGroup>
       <ItpHarvestDir>$(IntermediateOutputPath)ItpHarvest\</ItpHarvestDir>
-      <AbsHarvestDir>$(MSBuildThisFileDirectory)$(IntermediateOutputPath)ItpHarvest\</AbsHarvestDir>
+      <AbsHarvestDir>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)ItpHarvest\</AbsHarvestDir>
       <DotnetTool Condition="'$(DotnetTool)' == ''">C:\Program Files\dotnet\dotnet.exe</DotnetTool>
       <PublishCommand Condition="'$(PublishCommand)' == ''">"$(DotnetTool)" publish $(PublishCommandOptions) -r $(RuntimeIdentifier) -c $(Configuration)</PublishCommand>
       
@@ -48,9 +48,9 @@
   <!-- Run per %(PublishProject) to ensure FileWrites gets updated even if one fails -->
   <Target Name="ItpHarvest_Publish" Inputs="%(PublishProject.Identity)" Outputs="%(Identity)_notexists">
     <!-- PublishProject comes in nullable PackagePath -->
-    <Exec Command="$(PublishCommand) %(PublishProject.PublishOptions) -o &quot;$([MSBuild]::EnsureTrailingSlash('$(AbsHarvestDir)%(PublishProject.PackagePath)'))\&quot; &quot;$(MSBuildThisFileDirectory)%(PublishProject.Identity)&quot;" />
+    <Exec Command="$(PublishCommand) %(PublishProject.PublishOptions) -o &quot;$([MSBuild]::EnsureTrailingSlash('$(AbsHarvestDir)%(PublishProject.PackagePath)'))\&quot; &quot;%(PublishProject.Identity)&quot;" />
     <ItemGroup>
-      <FileWrites Include="$(MSBuildThisFileDirectory)$(ItpHarvestDir)**\*" />
+      <FileWrites Include="$(ItpHarvestDir)**\*" />
     </ItemGroup>
     <!-- Since we're including from the harvest dir multiple times, remove dups -->
     <RemoveDuplicates Inputs="@(FileWrites)" />

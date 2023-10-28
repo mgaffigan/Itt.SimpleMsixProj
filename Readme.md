@@ -1,12 +1,14 @@
 # Itt.SimpleMsixProj
 
+![Nuget](https://img.shields.io/nuget/v/Itt.SimpleMsixProj)
+
 Provides targets for a project which generates an msix using makeappx and dotnet publish.
 
 ## Usage
 
 Add a setup project with a .msbuildproj or .proj:
 
-    <Project Sdk="Itt.SimpleMsixProj/1.0.0">
+    <Project Sdk="Itt.SimpleMsixProj/2.0.0">
         <PropertyGroup>
             <TargetFramework>net7</TargetFramework>
             <SigntoolPfx>codesign_123.pfx</SigntoolPfx>
@@ -30,7 +32,7 @@ Add a setup project with a .msbuildproj or .proj:
         </ItemGroup>
     </Project>
 
-Add an AppxManifest.xml and Assets folder. See SampleApp.Setup for example project. Build and find the msix in the output folder.
+Add an AppxManifest.xml and Assets folder. See [SampleApp.Setup](https://github.com/mgaffigan/Itt.SimpleMsixProj/tree/master/SampleApp.Setup) for example project. Build and find the msix in the output folder.
 
 ## Items
 

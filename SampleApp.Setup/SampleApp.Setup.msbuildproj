@@ -1,0 +1,11 @@
+﻿<Project Sdk="Itt.SimpleMsixProj/2.0.0">
+  <PropertyGroup>
+    <TargetFramework>net7</TargetFramework>
+    <SigntoolPfx>codesign_123.pfx</SigntoolPfx>
+    <SigntoolPassword>123</SigntoolPassword>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PublishProject Include="..\SampleApp\SampleApp.csproj" />
+  </ItemGroup>
+</Project>
