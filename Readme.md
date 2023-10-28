@@ -30,7 +30,7 @@ Add a setup project with a .msbuildproj or .proj:
         </ItemGroup>
     </Project>
 
-Build and find the msix in the output folder.
+Add an AppxManifest.xml and Assets folder. See SampleApp.Setup for example project. Build and find the msix in the output folder.
 
 ## Items
 

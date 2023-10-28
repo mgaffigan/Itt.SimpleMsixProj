@@ -6,6 +6,7 @@
     <PackageTags>MSBuild;MSBuildSdk;appx;msix</PackageTags>
     <PackageType>MSBuildSdk</PackageType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />

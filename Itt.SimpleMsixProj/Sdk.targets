@@ -83,4 +83,6 @@
     </ItpHarvestTargets>
   </PropertyGroup>
   <Target Name="ItpHarvest" DependsOnTargets="$(ItpHarvestTargets)" AfterTargets="CoreCompile" />
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.Build.NoTargets/3.7.0" />
 </Project>
