@@ -4,7 +4,10 @@
     <SigntoolPfx>codesign_123.pfx</SigntoolPfx>
     <SigntoolPassword>123</SigntoolPassword>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="codesign.cer" />
+    <None Include="codesign_123.pfx" />
+  </ItemGroup>
   <ItemGroup>
     <PublishProject Include="..\SampleApp\SampleApp.csproj" />
   </ItemGroup>

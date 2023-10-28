@@ -6,6 +6,19 @@ Provides targets for a project which generates an msix using makeappx and dotnet
 
 ## Usage
 
+Download [Simple MSIX Setup Project.zip](https://github.com/mgaffigan/Itt.SimpleMsixProj/blob/master/Simple%20MSIX%20Setup%20Project.zip) 
+to `Documents\Visual Studio 2022\Templates\ProjectTemplates`.  Once the template is installed:
+
+1. Add a new project using the `Simple MSIX Setup Project` template.
+1. Edit the project file `PublishProject` item to reference the appropriate source project(s).
+1. Update the name, version, and display name of the application in `AppxManifest.xml`
+1. Update the icons in the Assets folder
+1. Import the `codesign.cer` certificate to the `Machine > Trusted People` store or update it to an existing trusted certificate
+1. Build the project
+1. Install the msix from the output folder
+
+## Manual usage
+
 Add a setup project with a .msbuildproj or .proj:
 
     <Project Sdk="Itt.SimpleMsixProj/2.0.0">
@@ -79,3 +92,8 @@ signed.  The `/Package/Identity/@Publisher` must match the subject of the PFX fo
 
 Signing is not performed when building in `Configuration=Release`.  It is recommended to use a tool
 like the Windows Store or [msixhero](https://msixhero.net/) for release singing.
+
+A sample self-signed certificate is included in the sample app (`codesign_123.pfx`).  The password is `123`.
+This certificate may be used for testing, but you should use a properly issued certificate for production.
+On the machine used for testing, import `codesign.cer` to the `Machine > Trusted People` 
+store (`cert:\LocalMachine\TrustedPeople` in powershell).
