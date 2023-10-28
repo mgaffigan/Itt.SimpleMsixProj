@@ -1,6 +1,6 @@
 # Itt.SimpleMsixProj
 
-![Nuget](https://img.shields.io/nuget/v/Itt.SimpleMsixProj)
+[![Nuget](https://img.shields.io/nuget/v/Itt.SimpleMsixProj)](https://www.nuget.org/packages/Itt.SimpleMsixProj)
 
 Provides targets for a project which generates an msix using makeappx and dotnet publish.
 
